@@ -16,13 +16,30 @@ npm install
 
 ## Usage
 
-### Start the server
+### Start the server (locally)
 
 ```bash
 npm start
 ```
 
 The server will start on port 3000.
+
+### Run with Docker
+
+Build and run using Docker only:
+
+```bash
+docker build -t job-monitor .
+docker run --rm -p 3000:3000 --name job-monitor job-monitor
+```
+
+Or use Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+When running in Docker, the server will be available on port 3000.
 
 ### Run tests
 

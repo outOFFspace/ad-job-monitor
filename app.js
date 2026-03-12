@@ -4,6 +4,7 @@ const stats = require('./services/stats.service');
 
 const app = express();
 app.use(express.json());
+const port = process.env.PORT || 3000;
 
 app.post('/jobs', (req, res) => {
   const { jobName, arguments: args } = req.body;
@@ -47,4 +48,4 @@ app.get('/stats', (req, res) => {
   res.json(stats.generate(Array.from(jobs.values())));
 });
 
-app.listen(3000).on('listening', () => console.log('Server started on port 3000'));
+app.listen(port).on('listening', () => console.log(`Server started on port ${port}`));
