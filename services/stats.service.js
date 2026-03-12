@@ -21,30 +21,8 @@ function generateRecommendation(pattern, impact) {
     return `No clear impact detected for ${pattern}.`;
 }
 
-function generate(jobs) {
-
-    const finishedJobs = jobs.filter(j => j.status === JOB_STATUS.COMPLETED || j.status === JOB_STATUS.CRASHED);
-
-    const totalJobs = finishedJobs.length;
-
-    if (totalJobs === 0) {
-        return {
-            summary: {
-                totalJobs: 0,
-                successfulJobs: 0,
-                failedJobs: 0,
-                overallSuccessRate: 0
-            },
-            insights: []
-        }
-    }
-
-    const successfulJobs = finishedJobs.filter(j => j.status === JOB_STATUS.COMPLETED).length;
-    const failedJobs = totalJobs - successfulJobs;
-    const overallSuccessRate = successfulJobs / totalJobs;
-
+function generateInsights(finishedJobs, overallSuccessRate) {
     function analyze(title, criteria, predicate) {
-
         const matches = finishedJobs.filter(predicate);
         if (matches.length === 0) {
             return null;
@@ -93,13 +71,37 @@ function generate(jobs) {
 
     const i5 = analyze(
         "Budget allocation matters",
-        { budget: "present" },
+        { budget: 'present' },
         j => (j.args || []).some(a => a.includes('budget'))
     );
 
     [i1, i2, i3, i4, i5].forEach(insight => {
         if (insight) insights.push(insight);
     });
+
+    return insights;
+}
+
+function generate(jobs) {
+    const finishedJobs = jobs.filter(j => j.status === JOB_STATUS.COMPLETED || j.status === JOB_STATUS.CRASHED);
+    const totalJobs = finishedJobs.length;
+
+    if (totalJobs === 0) {
+        return {
+            summary: {
+                totalJobs: 0,
+                successfulJobs: 0,
+                failedJobs: 0,
+                overallSuccessRate: 0
+            },
+            insights: []
+        }
+    }
+
+    const successfulJobs = finishedJobs.filter(j => j.status === JOB_STATUS.COMPLETED).length;
+    const failedJobs = totalJobs - successfulJobs;
+    const overallSuccessRate = successfulJobs / totalJobs;
+    const insights = generateInsights(finishedJobs, overallSuccessRate);
 
     return {
         summary: {
